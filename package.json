@@ -1,0 +1,25 @@
+{
+  "name": "file-processing-cero-humedad",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "initial": "node initial_load/deleteAll.js && node initial_load/getCeroHumedadProductos.js && node initial_load/getWalmartProductos.js && node initial_load/getWalmartTipoTiendas.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^3.1.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.32.2"
+  },
+  "description": ""
+}
