@@ -1,85 +1,35 @@
 /* eslint-disable no-extend-native */
 
 const CONSTANTS = require('./constants.js')
-const getConnection = require('./conectionDB')
+const getConnection = require('./db/mysql')
+const { save } = require('./db/mongodb/models/log')
 
 Date.prototype.getWeekNumber = function () {
-  const d = new Date(+this) // Creamos un nuevo Date con la fecha de "this".
-  d.setHours(0, 0, 0, 0) // Nos aseguramos de limpiar la hora.
-  d.setDate(d.getDate() + 4 - (d.getDay() || 7)) // Recorremos los días para asegurarnos de estar "dentro de la semana"
-  // Finalmente, calculamos redondeando y ajustando por la naturaleza de los números en JS:
+  const d = new Date(+this)
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7))
   return Math.ceil((((d - new Date(d.getFullYear(), 0, 1)) / 8.64e7) + 1) / 7)
 }
 
 const getDate = (date) => {
-  // console.log(date)
-
   const month = date.substring(0, 2)
-  // console.log(month)
-
   const day = date.substring(3, 5)
-  // console.log(day)
-
   const year = date.substring(6)
-  // console.log(year)
-
-  // console.log(year, month, day)
-
-  // const DATE = new Date(year, Number(month)-1, day);
-
-  // console.log(DATE)
-
-  // console.log(DATE.getWeekNumber());
-  // console.log(DATE.getFullYear())
-  // console.log( year+'-'+month+'-'+day)
-
   return year + '-' + month + '-' + day
 }
 
 const getYear = (date) => {
-  // console.log(date)
-
   const month = date.substring(0, 2)
-  // console.log(month)
-
   const day = date.substring(3, 5)
-  // console.log(day)
-
   const year = date.substring(6)
-  // console.log(year)
-
-  // console.log(year, month, day)
-
   const DATE = new Date(year, Number(month) - 1, day)
-
-  // console.log(DATE)
-
-  // console.log(DATE.getWeekNumber());
-  // console.log(DATE.getFullYear())
-  // console.log( year+'-'+month+'-'+day)
   return DATE.getFullYear()
 }
 const getWeekNumber = (date) => {
-  // console.log(date)
-
   const month = date.substring(0, 2)
-  // console.log(month)
-
   const day = date.substring(3, 5)
-  // console.log(day)
-
   const year = date.substring(6)
-  // console.log(year)
-
-  // console.log(year, month, day)
-
   const DATE = new Date(year, Number(month) - 1, day)
-
-  // console.log(DATE)
-
-  // console.log(DATE.getWeekNumber());
-  // console.log(DATE.getFullYear())
-  // console.log( year+'-'+month+'-'+day)
   return DATE.getWeekNumber()
 }
 
@@ -92,11 +42,7 @@ module.exports = async function getWalmartTabular (dataExcel, archivo) {
     if (rows.length === 0) {
       const fechas = dataExcel[10]['Nuevo Semanal']
 
-      // console.log(fechas)
-
       const fechaDesde = fechas.substring(46, 56)
-
-      // console.log(fechaDesde);
 
       const fechaHasta = fechas.substring(61, 71)
 
@@ -105,8 +51,6 @@ module.exports = async function getWalmartTabular (dataExcel, archivo) {
 
       const SEMANA = getWeekNumber(fechaDesde)
       const ANIO = getYear(fechaDesde)
-
-      // await promisePool.query('DELETE FROM Walmart_Tabular;');
 
       const VALUES = []
 
@@ -129,7 +73,12 @@ module.exports = async function getWalmartTabular (dataExcel, archivo) {
 
       await conectionDB.query('INSERT INTO Walmart_Tabular (codigoProducto, codigoTienda, precioVentaUnidad, costoUnidad, cantidadVendida, totalPrecio, inventario, semana, anio, fechaDesde, fechaHasta, archivo, fechaRegistro) VALUES ?', [VALUES])
     } else console.log('   It already exists')
-  } catch (e) { console.log(e.message) } finally {
+  } catch (e) {
+    if (e.message !== "Cannot read property 'Nuevo Semanal' of undefined") {
+      console.log(e.message)
+      await save({ type: CONSTANTS.TYPE_LOG.TABULAR, file: archivo, message: e.message, description: e })
+    }
+  } finally {
     conectionDB.end()
   }
   console.log('  END   getWalmartTabular')

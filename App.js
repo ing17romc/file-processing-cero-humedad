@@ -1,6 +1,5 @@
 const XLSX = require('xlsx')
 const CONSTANTS = require('./constants.js')
-// const getWalmartTipoTiendas = require('./getWalmartTipoTiendas.js')
 const getWalmartTiendas = require('./getWalmartTiendas.js')
 const getWalmartProductos = require('./getWalmartProductos.js')
 const getWalmartTabular = require('./getWalmartTabular.js')
@@ -9,6 +8,8 @@ const fs = require('fs')
 
 const getExtension = (file) => file.slice(((file.lastIndexOf('.') - 1) + 2)).toLowerCase()
 
+const { save } = require('./db/mongodb/models/log')
+
 async function readAllFiles (path, arrayOfFiles = []) {
   const files = fs.readdirSync(path)
   files.forEach(file => {
@@ -16,7 +17,6 @@ async function readAllFiles (path, arrayOfFiles = []) {
     if (stat.isDirectory()) {
       readAllFiles(`${path}/${file}`, arrayOfFiles)
     } else if (getExtension(file) === 'xlsx') {
-      // console.log(file)
       arrayOfFiles.push(`${path}/${file}`)
     }
   }
@@ -28,20 +28,19 @@ async function leerExcel (ruta) {
   const workbook = XLSX.readFile(ruta)
   const workbookSheets = workbook.SheetNames
 
-  // const sheet = workbookSheets[CONSTANTS.SHEET]
-  // const dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
-
   console.log('BEGIN => ', ruta)
 
   for (const sheet of workbookSheets) {
     const dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
     console.log('SHEET => ', sheet)
     try {
-      // await getWalmartTipoTiendas(dataExcel)
-      await getWalmartTiendas(dataExcel)
-      await getWalmartProductos(dataExcel)
+      await getWalmartTiendas(ruta, dataExcel)
+      await getWalmartProductos(ruta, dataExcel)
       await getWalmartTabular(dataExcel, ruta)
-    } catch (e) { console.log(e.message) }
+    } catch (e) {
+      console.log(e.message)
+      await save({ type: CONSTANTS.TYPE_LOG.START, file: ruta, message: e.message, description: e })
+    }
   }
 
   console.log('END =>   ', ruta)
@@ -51,8 +50,6 @@ async function main () {
   console.log('### STARTING ###')
 
   const files = await readAllFiles(CONSTANTS.PATH)
-
-  // console.log(files)
 
   await clearTabular(files)
 

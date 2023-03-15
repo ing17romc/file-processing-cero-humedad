@@ -1,5 +1,5 @@
 const XLSX = require('xlsx')
-const getConnection = require('../conectionDB')
+const getConnection = require('../db/mysql')
 const { FILINITIAL_LOAD_FILE, START_ROW, ITEM_DEFAULT } = require('../constants.js')
 
 async function process () {

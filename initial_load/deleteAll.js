@@ -1,5 +1,6 @@
-const getConnection = require('../conectionDB')
+const getConnection = require('../db/mysql')
 const CONSTANTS = require('../constants.js')
+const { deleteAll } = require('../db/mongodb/models/log')
 
 async function process () {
   console.log('BEGIN DELETE ALL')
@@ -15,6 +16,7 @@ async function process () {
 
     await conectionDB.query('INSERT INTO Walmart_TiposTiendas (id, nombre, estado) VALUES (?,?,?)', [CONSTANTS.ITEM_DEFAULT.ID, CONSTANTS.ITEM_DEFAULT.NOMBRE, CONSTANTS.ITEM_DEFAULT.ESTADO])
     await conectionDB.query('INSERT INTO CeroHumedad_Productos (id, nombre, estado) VALUES (?,?,?)', [CONSTANTS.ITEM_DEFAULT.ID, CONSTANTS.ITEM_DEFAULT.NOMBRE, CONSTANTS.ITEM_DEFAULT.ESTADO])
+    // await deleteAll()
   } catch (e) { console.log(e.message) } finally {
     conectionDB.end()
   }

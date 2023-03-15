@@ -1,8 +1,9 @@
 
 const CONSTANTS = require('./constants.js')
-const getConnection = require('./conectionDB')
+const getConnection = require('./db/mysql')
+const { save } = require('./db/mongodb/models/log')
 
-module.exports = async function getWalmartProductos (dataExcel) {
+module.exports = async function getWalmartProductos (ruta, dataExcel) {
   console.log('  BEGIN getWalmartProductos')
 
   const conectionDB = await getConnection()
@@ -30,7 +31,12 @@ module.exports = async function getWalmartProductos (dataExcel) {
     }
 
     if (VALUES.length !== 0) await conectionDB.query('INSERT INTO Walmart_Productos (id, nombre, estado, idCeroHumedadProducto) VALUES ? ', [VALUES])
-  } catch (e) { console.log(e.message) } finally {
+  } catch (e) {
+    if (e.message !== "Cannot read property 'Nuevo Semanal' of undefined") {
+      console.log(e.message)
+      await save({ type: CONSTANTS.TYPE_LOG.PRODUCTO, file: ruta, message: e.message, description: e })
+    }
+  } finally {
     conectionDB.end()
   }
   console.log('  END   getWalmartProductos')

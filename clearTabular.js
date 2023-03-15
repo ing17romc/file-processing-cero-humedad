@@ -1,4 +1,6 @@
-const getConnection = require('./conectionDB')
+const CONSTANTS = require('./constants.js')
+const getConnection = require('./db/mysql')
+const { save } = require('./db/mongodb/models/log')
 
 const getSQL = (files) => {
   let string = ''
@@ -8,8 +10,7 @@ const getSQL = (files) => {
   }
 
   const sql = 'DELETE FROM Walmart_Tabular WHERE archivo NOT IN (' + string.slice(0, -1) + ');'
-  // const sql = 'DELETE FROM Walmart_Tabular;'
-  // console.log(sql)
+
   return sql
 }
 
@@ -20,10 +21,12 @@ module.exports = async function clearTabular (files) {
   try {
     if (files.length > 0) {
       const SQL = getSQL(files)
-      // console.log(SQL)
       await conectionDB.query(SQL)
     }
-  } catch (e) { console.log(e.message) } finally {
+  } catch (e) {
+    console.log(e.message)
+    await save({ type: CONSTANTS.TYPE_LOG.TABULAR, file: 'clear-tabular', message: e.message, description: e })
+  } finally {
     conectionDB.end()
   }
 
