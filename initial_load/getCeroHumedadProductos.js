@@ -21,7 +21,6 @@ async function process () {
     for (let index = START_ROW; index < dataExcel.length; index++) {
       const element = dataExcel[index]
       const nombre = element.__EMPTY_1
-      // console.log(index, nombre)
 
       if (nombre !== undefined && nombre !== '' && nombre !== null) {
         if (!rows.some(element => element.nombre === nombre) && !VALUES.some(element => element[1] === nombre)) {
@@ -32,7 +31,7 @@ async function process () {
       }
     }
     if (VALUES.length !== 0) await conectionDB.query('INSERT INTO CeroHumedad_Productos (id, nombre, estado) VALUES ?', [VALUES])
-  } catch (e) { console.log(e.message) } finally {
+  } catch (e) { console.log(e) } finally {
     conectionDB.end()
   }
   console.log('END   getCeroHumedadProductos')

@@ -1,6 +1,7 @@
 /* eslint-disable no-extend-native */
 
 const CONSTANTS = require('./constants.js')
+const { descriptionException } = require('./utils')
 const getConnection = require('./db/mysql')
 const { save } = require('./db/mongodb/models/log')
 
@@ -33,11 +34,11 @@ const getWeekNumber = (date) => {
   return DATE.getWeekNumber()
 }
 
-module.exports = async function getWalmartTabular (dataExcel, archivo) {
+module.exports = async function getWalmartTabular (ruta, sheet, dataExcel) {
   console.log('  BEGIN getWalmartTabular')
   const conectionDB = await getConnection()
   try {
-    const [rows] = await conectionDB.query('SELECT * FROM Walmart_Tabular where archivo = "' + archivo + '";')
+    const [rows] = await conectionDB.query('SELECT * FROM Walmart_Tabular where archivo = "' + ruta + '";')
 
     if (rows.length === 0) {
       const fechas = dataExcel[10]['Nuevo Semanal']
@@ -67,7 +68,7 @@ module.exports = async function getWalmartTabular (dataExcel, archivo) {
         const inventario = element.__EMPTY_20
 
         if (codigoProducto !== undefined && codigoProducto !== '' && codigoProducto !== null && (cantidadVendida !== 0 || inventario !== 0)) {
-          VALUES.push([codigoProducto, codigoTienda, precioVentaUnidad, costoUnidad, cantidadVendida, totalPrecio, inventario, SEMANA, ANIO, FECHA_DESDE, FECHA_HASTA, archivo, hoy])
+          VALUES.push([codigoProducto, codigoTienda, precioVentaUnidad, costoUnidad, cantidadVendida, totalPrecio, inventario, SEMANA, ANIO, FECHA_DESDE, FECHA_HASTA, ruta, hoy])
         }
       }
 
@@ -75,8 +76,8 @@ module.exports = async function getWalmartTabular (dataExcel, archivo) {
     } else console.log('   It already exists')
   } catch (e) {
     if (e.message !== "Cannot read property 'Nuevo Semanal' of undefined") {
-      console.log(e.message)
-      await save({ type: CONSTANTS.TYPE_LOG.TABULAR, file: archivo, message: e.message, description: e })
+      const description = descriptionException(e)
+      await save({ sheet, type: CONSTANTS.TYPE_LOG.TABULAR, file: ruta, message: e.message, description })
     }
   } finally {
     conectionDB.end()

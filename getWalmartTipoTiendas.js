@@ -1,9 +1,10 @@
 
 const CONSTANTS = require('./constants.js')
+const { descriptionException } = require('./utils')
 const getConnection = require('./db/mysql')
 const { save } = require('./db/mongodb/models/log')
 
-module.exports = async function getWalmartTipoTiendas (ruta, dataExcel) {
+module.exports = async function getWalmartTipoTiendas (ruta, sheet, dataExcel) {
   console.log('  BEGIN getWalmartTipoTiendas')
 
   const conectionDB = await getConnection()
@@ -29,8 +30,8 @@ module.exports = async function getWalmartTipoTiendas (ruta, dataExcel) {
 
     if (VALUES.length !== 0) { await conectionDB.query('INSERT INTO Walmart_TiposTiendas (id, nombre, estado) VALUES ?', [VALUES]) }
   } catch (e) {
-    console.log(e.message)
-    await save({ type: CONSTANTS.TYPE_LOG.TIPO_TIENDAS, file: ruta, message: e.message, description: e })
+    const description = descriptionException(e)
+    await save({ sheet, type: CONSTANTS.TYPE_LOG.TIPO_TIENDAS, file: ruta, message: e.message, description })
   } finally {
     conectionDB.end()
   }

@@ -1,9 +1,10 @@
 
 const CONSTANTS = require('./constants.js')
+const { descriptionException } = require('./utils')
 const getConnection = require('./db/mysql')
 const { save } = require('./db/mongodb/models/log')
 
-module.exports = async function getWalmartProductos (ruta, dataExcel) {
+module.exports = async function getWalmartProductos (ruta, sheet, dataExcel) {
   console.log('  BEGIN getWalmartProductos')
 
   const conectionDB = await getConnection()
@@ -19,13 +20,10 @@ module.exports = async function getWalmartProductos (ruta, dataExcel) {
       const nombre = element.Semanal
 
       if (nombre !== undefined && nombre !== '' && nombre !== null) {
-      // const [rows] = await ('SELECT * FROM Walmart_Productos where nombre = "' + nombre + '";')
         if (!WalmartProductos.some(element => element.id === code) && !VALUES.some(element => element[0] === code)) {
-          // if (rows.length === 0) {
           const idCH = CONSTANTS.ITEM_DEFAULT.ID
           console.log(code, nombre, idCH)
           VALUES.push([code, nombre, 1, idCH])
-        // await conectionDB.query('INSERT INTO Walmart_Productos (id, nombre, estado, idCeroHumedadProducto) VALUES (?,?,?,?)', [code, nombre, 1, idCH])
         }
       }
     }
@@ -33,8 +31,8 @@ module.exports = async function getWalmartProductos (ruta, dataExcel) {
     if (VALUES.length !== 0) await conectionDB.query('INSERT INTO Walmart_Productos (id, nombre, estado, idCeroHumedadProducto) VALUES ? ', [VALUES])
   } catch (e) {
     if (e.message !== "Cannot read property 'Nuevo Semanal' of undefined") {
-      console.log(e.message)
-      await save({ type: CONSTANTS.TYPE_LOG.PRODUCTO, file: ruta, message: e.message, description: e })
+      const description = descriptionException(e)
+      await save({ sheet, type: CONSTANTS.TYPE_LOG.PRODUCTO, file: ruta, message: e.message, description })
     }
   } finally {
     conectionDB.end()

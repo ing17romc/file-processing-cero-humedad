@@ -44,7 +44,7 @@ async function process () {
       }
     }
     if (VALUES.length !== 0) await conectionDB.query('INSERT INTO Walmart_Productos (id, nombre, estado, idCeroHumedadProducto) VALUES ? ', [VALUES])
-  } catch (e) { console.log(e.message) } finally {
+  } catch (e) { console.log(e) } finally {
     conectionDB.end()
   }
   console.log('END   getWalmartProductos')

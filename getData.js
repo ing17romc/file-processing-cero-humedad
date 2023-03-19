@@ -10,7 +10,6 @@ function leerExcel (ruta) {
 
   for (let index = 21; index < 25; index++) {
     const element = dataExcel[index]
-    // console.log(element)
 
     const codigoProducto = element.__EMPTY
     const codigoTienda = element.__EMPTY_8

@@ -1,5 +1,6 @@
 
 const CONSTANTS = require('./constants.js')
+const { descriptionException } = require('./utils')
 const getConnection = require('./db/mysql')
 const { save } = require('./db/mongodb/models/log')
 
@@ -7,7 +8,7 @@ function isFloat (n) {
   return Number(n) === n && n % 1 !== 0
 }
 
-module.exports = async function getWalmartTiendas (ruta, dataExcel) {
+module.exports = async function getWalmartTiendas (ruta, sheet, dataExcel) {
   console.log('  BEGIN getWalmartTiendas')
 
   const conectionDB = await getConnection()
@@ -41,8 +42,8 @@ module.exports = async function getWalmartTiendas (ruta, dataExcel) {
     }
     if (VALUES.length !== 0) await conectionDB.query('INSERT INTO Walmart_Tiendas (id, nombre, estado, idTipo, codigoPostal, localidad, archivo) VALUES ?', [VALUES])
   } catch (e) {
-    console.log(e.message)
-    await save({ type: CONSTANTS.TYPE_LOG.TIENDA, file: ruta, message: e.message, description: e })
+    const description = descriptionException(e)
+    await save({ sheet, type: CONSTANTS.TYPE_LOG.TIENDA, file: ruta, message: e.message, description })
   } finally {
     conectionDB.end()
   }

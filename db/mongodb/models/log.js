@@ -3,9 +3,13 @@ const dbConnect = require('../')
 
 const LogSchema = new mongoose.Schema({
   file: String,
+  sheet: String,
   type: String,
   message: String,
   description: String
+},
+{
+  timestamps: true
 })
 
 const Log = mongoose.models.Log || mongoose.model('Log', LogSchema)
@@ -17,10 +21,10 @@ const find = async () => {
 
   return data
 }
-const save = async ({ file, type, message, description }) => {
+const save = async ({ file, sheet, type, message, description }) => {
   await dbConnect()
 
-  const newData = new Log({ file, type, message, description })
+  const newData = new Log({ file, sheet, type, message, description })
 
   return await newData.save()
 }
@@ -31,10 +35,10 @@ const findById = async (id) => {
 
   return data
 }
-const update = async ({ id, file, type, message, description }) => {
+const update = async ({ id, file, sheet, type, message, description }) => {
   await dbConnect()
 
-  return await Log.updateOne({ _id: id }, { file, type, message, description }, {
+  return await Log.updateOne({ _id: id }, { file, sheet, type, message, description }, {
     new: true,
     runValidators: true
   })
@@ -44,10 +48,10 @@ const deleteByFile = async (file) => {
 
   return await Log.deleteOne({ file })
 }
-const deleteAll = async () => {
+const deleteAll = async (files = []) => {
   await dbConnect()
 
-  return await Log.deleteMany()
+  return await Log.deleteMany({ file: { $nin: files } })
 }
 
 module.exports = {

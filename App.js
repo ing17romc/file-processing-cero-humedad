@@ -1,5 +1,6 @@
 const XLSX = require('xlsx')
 const CONSTANTS = require('./constants.js')
+const { descriptionException } = require('./utils')
 const getWalmartTiendas = require('./getWalmartTiendas.js')
 const getWalmartProductos = require('./getWalmartProductos.js')
 const getWalmartTabular = require('./getWalmartTabular.js')
@@ -34,12 +35,12 @@ async function leerExcel (ruta) {
     const dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
     console.log('SHEET => ', sheet)
     try {
-      await getWalmartTiendas(ruta, dataExcel)
-      await getWalmartProductos(ruta, dataExcel)
-      await getWalmartTabular(dataExcel, ruta)
+      await getWalmartTiendas(ruta, sheet, dataExcel)
+      await getWalmartProductos(ruta, sheet, dataExcel)
+      await getWalmartTabular(ruta, sheet, dataExcel)
     } catch (e) {
-      console.log(e.message)
-      await save({ type: CONSTANTS.TYPE_LOG.START, file: ruta, message: e.message, description: e })
+      const description = descriptionException(e)
+      await save({ sheet, type: CONSTANTS.TYPE_LOG.START, file: ruta, message: e.message, description })
     }
   }
 
