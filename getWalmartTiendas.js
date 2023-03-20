@@ -34,18 +34,21 @@ module.exports = async function getWalmartTiendas (ruta, sheet, dataExcel) {
         if (!tienda.some(element => element.id === code) && !VALUES.some(element => element[0] === code)) {
           const idTipo = found !== undefined ? found.id : CONSTANTS.ITEM_DEFAULT.ID
 
-          console.log([code, nombre, 1, idTipo, cp, localidad])
+          // console.log([code, nombre, 1, idTipo, cp, localidad])
 
           VALUES.push([code, nombre, 1, idTipo, cp, localidad, ruta])
         }
       }
     }
-    if (VALUES.length !== 0) await conectionDB.query('INSERT INTO Walmart_Tiendas (id, nombre, estado, idTipo, codigoPostal, localidad, archivo) VALUES ?', [VALUES])
+
+    if (VALUES.length !== 0) {
+      console.log(VALUES)
+      await conectionDB.query('INSERT INTO Walmart_Tiendas (id, nombre, estado, idTipo, codigoPostal, localidad, archivo) VALUES ?', [VALUES])
+    }
   } catch (e) {
     const description = descriptionException(e)
     await save({ sheet, type: CONSTANTS.TYPE_LOG.TIENDA, file: ruta, message: e.message, description })
   } finally {
     conectionDB.end()
   }
-  console.log('  END   getWalmartTiendas')
 }

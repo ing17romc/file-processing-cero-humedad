@@ -82,5 +82,4 @@ module.exports = async function getWalmartTabular (ruta, sheet, dataExcel) {
   } finally {
     conectionDB.end()
   }
-  console.log('  END   getWalmartTabular')
 }

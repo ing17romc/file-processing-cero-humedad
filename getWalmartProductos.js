@@ -22,13 +22,16 @@ module.exports = async function getWalmartProductos (ruta, sheet, dataExcel) {
       if (nombre !== undefined && nombre !== '' && nombre !== null) {
         if (!WalmartProductos.some(element => element.id === code) && !VALUES.some(element => element[0] === code)) {
           const idCH = CONSTANTS.ITEM_DEFAULT.ID
-          console.log(code, nombre, idCH)
+          // console.log(code, nombre, idCH)
           VALUES.push([code, nombre, 1, idCH])
         }
       }
     }
 
-    if (VALUES.length !== 0) await conectionDB.query('INSERT INTO Walmart_Productos (id, nombre, estado, idCeroHumedadProducto) VALUES ? ', [VALUES])
+    if (VALUES.length !== 0) {
+      console.log(VALUES)
+      await conectionDB.query('INSERT INTO Walmart_Productos (id, nombre, estado, idCeroHumedadProducto) VALUES ? ', [VALUES])
+    }
   } catch (e) {
     if (e.message !== "Cannot read property 'Nuevo Semanal' of undefined") {
       const description = descriptionException(e)
@@ -37,5 +40,4 @@ module.exports = async function getWalmartProductos (ruta, sheet, dataExcel) {
   } finally {
     conectionDB.end()
   }
-  console.log('  END   getWalmartProductos')
 }

@@ -6,6 +6,8 @@ const { save, deleteAll } = require('./db/mongodb/models/log')
 const getSQLTabular = (files) => {
   let string = ''
 
+  console.log('DELETE TABULAR')
+
   for (let index = 0; index < files.length; index++) {
     string += '"' + files[index] + '",'
   }
@@ -17,6 +19,8 @@ const getSQLTabular = (files) => {
 
 const getSQLTiendas = (files) => {
   let string = ''
+
+  console.log('DELETE TIENDA')
 
   for (let index = 0; index < files.length; index++) {
     string += '"' + files[index] + '",'
@@ -32,20 +36,17 @@ module.exports = async function clearTabular (files) {
 
   const conectionDB = await getConnection()
   try {
-    if (files.length > 0) {
-      const SQLTabular = getSQLTabular(files)
-      await conectionDB.query(SQLTabular)
-      const SQLTiendas = getSQLTiendas(files)
-      await conectionDB.query(SQLTiendas)
-    }
     console.log('files', files)
-    await deleteAll(files)
+    const SQLTabular = getSQLTabular(files.length > 0 ? files : ['all'])
+    await conectionDB.query(SQLTabular)
+    const SQLTiendas = getSQLTiendas(files.length > 0 ? files : ['all'])
+    await conectionDB.query(SQLTiendas)
+    console.log('DELETE LOG')
+    await deleteAll(files.length > 0 ? files : ['all'])
   } catch (e) {
     const description = descriptionException(e)
     await save({ sheet: 'N/A', type: CONSTANTS.TYPE_LOG.TABULAR, file: 'clear-tabular', message: e.message, description })
   } finally {
     conectionDB.end()
   }
-
-  console.log('END   => clearTabular')
 }

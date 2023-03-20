@@ -35,6 +35,13 @@ const findById = async (id) => {
 
   return data
 }
+const findByFile = async (file) => {
+  await dbConnect()
+
+  const data = await Log.findOne({ file })
+
+  return data
+}
 const update = async ({ id, file, sheet, type, message, description }) => {
   await dbConnect()
 
@@ -46,7 +53,7 @@ const update = async ({ id, file, sheet, type, message, description }) => {
 const deleteByFile = async (file) => {
   await dbConnect()
 
-  return await Log.deleteOne({ file })
+  return await Log.deleteMany({ file })
 }
 const deleteAll = async (files = []) => {
   await dbConnect()
@@ -58,6 +65,7 @@ module.exports = {
   find,
   save,
   findById,
+  findByFile,
   update,
   deleteByFile,
   deleteAll

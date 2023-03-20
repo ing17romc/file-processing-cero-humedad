@@ -12,8 +12,6 @@ async function main () {
   const dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
 
   await getWalmartTipoTiendas(FILINITIAL_LOAD_FILE.NAME, sheet, dataExcel)
-
-  console.log('END   getWalmartTipoTiendas')
 }
 
 main()

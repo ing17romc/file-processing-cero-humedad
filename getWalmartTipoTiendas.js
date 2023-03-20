@@ -21,19 +21,21 @@ module.exports = async function getWalmartTipoTiendas (ruta, sheet, dataExcel) {
 
       if (nombre !== undefined && nombre !== '' && nombre !== null && !Number.isInteger(nombre)) {
         if (!tiposTiendas.some(element => element.nombre === nombre) && !VALUES.some(element => element[1] === nombre)) {
-          console.log(i, nombre)
+          // console.log(i, nombre)
           VALUES.push([i, nombre, 1])
           i++
         }
       }
     }
 
-    if (VALUES.length !== 0) { await conectionDB.query('INSERT INTO Walmart_TiposTiendas (id, nombre, estado) VALUES ?', [VALUES]) }
+    if (VALUES.length !== 0) {
+      console.log(VALUES)
+      await conectionDB.query('INSERT INTO Walmart_TiposTiendas (id, nombre, estado) VALUES ?', [VALUES])
+    }
   } catch (e) {
     const description = descriptionException(e)
     await save({ sheet, type: CONSTANTS.TYPE_LOG.TIPO_TIENDAS, file: ruta, message: e.message, description })
   } finally {
     conectionDB.end()
   }
-  console.log('  END   getWalmartTipoTiendas')
 }

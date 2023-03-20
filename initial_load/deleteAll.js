@@ -18,8 +18,6 @@ async function process () {
   } catch (e) { console.log(e) } finally {
     conectionDB.end()
   }
-
-  console.log('END   DELETE ALL')
 }
 
 process()
