@@ -42,7 +42,7 @@ module.exports = async function getWalmartTiendas (ruta, sheet, dataExcel) {
     }
 
     if (VALUES.length !== 0) {
-      console.log(VALUES)
+      console.log('ROWS', VALUES.length)
       await conectionDB.query('INSERT INTO Walmart_Tiendas (id, nombre, estado, idTipo, codigoPostal, localidad, archivo) VALUES ?', [VALUES])
     }
   } catch (e) {

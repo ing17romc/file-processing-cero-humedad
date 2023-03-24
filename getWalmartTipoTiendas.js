@@ -29,7 +29,7 @@ module.exports = async function getWalmartTipoTiendas (ruta, sheet, dataExcel) {
     }
 
     if (VALUES.length !== 0) {
-      console.log(VALUES)
+      console.log('ROWS', VALUES.length)
       await conectionDB.query('INSERT INTO Walmart_TiposTiendas (id, nombre, estado) VALUES ?', [VALUES])
     }
   } catch (e) {
