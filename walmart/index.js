@@ -1,30 +1,13 @@
 const XLSX = require('xlsx')
 const CONSTANTS = require('./constants.js')
-const { descriptionException } = require('./utils')
+const { descriptionException, readAllFiles } = require('./utils')
 const getWalmartTiendas = require('./getWalmartTiendas.js')
 const getWalmartProductos = require('./getWalmartProductos.js')
 const getWalmartTabular = require('./getWalmartTabular.js')
 const clearTabular = require('./clearTabular.js')
-const fs = require('fs')
-const getConnection = require('./db/mysql')
+const getConnection = require('../db/mysql')
 
-const getExtension = (file) => file.slice(((file.lastIndexOf('.') - 1) + 2)).toLowerCase()
-
-const { save, findByFile, deleteByFile } = require('./db/mongodb/models/log')
-
-async function readAllFiles (path, arrayOfFiles = []) {
-  const files = fs.readdirSync(path)
-  files.forEach(file => {
-    const stat = fs.statSync(`${path}/${file}`)
-    if (stat.isDirectory()) {
-      readAllFiles(`${path}/${file}`, arrayOfFiles)
-    } else if (getExtension(file) === 'xlsx') {
-      arrayOfFiles.push(`${path}/${file}`)
-    }
-  }
-  )
-  return arrayOfFiles
-}
+const { save, findByFile, deleteByFile } = require('../db/mongodb/models/log')
 
 async function leerExcel (ruta) {
   const workbook = XLSX.readFile(ruta)

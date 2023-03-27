@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "initial": "node initial_load/deleteAll.js && node initial_load/getCeroHumedadProductos.js && node initial_load/getWalmartProductos.js && node initial_load/getWalmartTipoTiendas.js"
+    "init:wmt": "node walmart/initial_load/deleteAll.js && node walmart/initial_load/getCeroHumedadProductos.js && node walmart/initial_load/getWalmartProductos.js && node walmart/initial_load/getWalmartTipoTiendas.js",
+    "load:wmt": "node walmart/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "mongodb": "^5.1.0",
     "mongoose": "^7.0.1",
     "mysql2": "^3.1.2",

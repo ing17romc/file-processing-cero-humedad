@@ -1,37 +1,20 @@
 /* eslint-disable no-extend-native */
 
 const CONSTANTS = require('./constants.js')
-const { descriptionException } = require('./utils')
-const getConnection = require('./db/mysql')
-const { save } = require('./db/mongodb/models/log')
+const {
+  descriptionException, getDate,
+  getYear,
+  getWeekNumber,
+  sliceArray
+} = require('./utils')
+const getConnection = require('../db/mysql')
+const { save } = require('../db/mongodb/models/log')
 
 Date.prototype.getWeekNumber = function () {
   const d = new Date(+this)
   d.setHours(0, 0, 0, 0)
   d.setDate(d.getDate() + 4 - (d.getDay() || 7))
   return Math.ceil((((d - new Date(d.getFullYear(), 0, 1)) / 8.64e7) + 1) / 7)
-}
-
-const getDate = (date) => {
-  const month = date.substring(0, 2)
-  const day = date.substring(3, 5)
-  const year = date.substring(6)
-  return year + '-' + month + '-' + day
-}
-
-const getYear = (date) => {
-  const month = date.substring(0, 2)
-  const day = date.substring(3, 5)
-  const year = date.substring(6)
-  const DATE = new Date(year, Number(month) - 1, day)
-  return DATE.getFullYear()
-}
-const getWeekNumber = (date) => {
-  const month = date.substring(0, 2)
-  const day = date.substring(3, 5)
-  const year = date.substring(6)
-  const DATE = new Date(year, Number(month) - 1, day)
-  return DATE.getWeekNumber()
 }
 
 module.exports = async function getWalmartTabular (ruta, sheet, dataExcel) {
@@ -72,7 +55,18 @@ module.exports = async function getWalmartTabular (ruta, sheet, dataExcel) {
         }
       }
 
-      await conectionDB.query('INSERT INTO Walmart_Tabular (codigoProducto, codigoTienda, precioVentaUnidad, costoUnidad, cantidadVendida, totalPrecio, inventario, semana, anio, fechaDesde, fechaHasta, archivo, fechaRegistro) VALUES ?', [VALUES])
+      if (VALUES.length !== 0) {
+        console.log('ROWS', VALUES.length)
+
+        const ARRAY = sliceArray(VALUES)
+
+        console.log('ARRAY', ARRAY.length)
+
+        for (const values of ARRAY) {
+          console.log('values', values.length)
+          await conectionDB.query('INSERT INTO Walmart_Tabular (codigoProducto, codigoTienda, precioVentaUnidad, costoUnidad, cantidadVendida, totalPrecio, inventario, semana, anio, fechaDesde, fechaHasta, archivo, fechaRegistro) VALUES ?', [values])
+        }
+      }
     } else console.log('   It already exists')
   } catch (e) {
     if (e.message !== "Cannot read property 'Nuevo Semanal' of undefined") {

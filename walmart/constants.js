@@ -1,6 +1,6 @@
 module.exports = {
   FILINITIAL_LOAD_FILE: {
-    NAME: 'initial_load/default.xlsx',
+    NAME: 'walmart/initial_load/default.xlsx',
     SHEET: 2
   },
   PATH: '../../Dropbox/autoservicios/cero-humedad/walmart',
@@ -12,5 +12,6 @@ module.exports = {
     PRODUCTO: 'PRODUCTO',
     TABULAR: 'TABULAR',
     START: 'START'
-  }
+  },
+  LONGITUD_PEDAZOS: 4000
 }

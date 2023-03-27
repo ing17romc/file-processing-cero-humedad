@@ -1,8 +1,8 @@
 
 const CONSTANTS = require('./constants.js')
 const { descriptionException } = require('./utils')
-const getConnection = require('./db/mysql')
-const { save } = require('./db/mongodb/models/log')
+const getConnection = require('../db/mysql')
+const { save } = require('../db/mongodb/models/log')
 
 module.exports = async function getWalmartTipoTiendas (ruta, sheet, dataExcel) {
   console.log('  BEGIN getWalmartTipoTiendas')

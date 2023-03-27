@@ -1,4 +1,5 @@
-const getConnection = require('../db/mysql')
+const getConnection = require('../../db/mysql')
+// const { deleteAll } = require('../../db/mongodb/models/log')
 const CONSTANTS = require('../constants.js')
 
 async function process () {
@@ -7,6 +8,8 @@ async function process () {
   const conectionDB = await getConnection()
 
   try {
+    // await deleteAll(['all'])
+
     await conectionDB.query('DELETE FROM Walmart_Productos;')
     await conectionDB.query('DELETE FROM CeroHumedad_Productos;')
     await conectionDB.query('DELETE FROM Walmart_Tiendas;')

@@ -1,7 +1,7 @@
 const CONSTANTS = require('./constants.js')
 const { descriptionException } = require('./utils')
-const getConnection = require('./db/mysql')
-const { save, deleteAll } = require('./db/mongodb/models/log')
+const getConnection = require('../db/mysql')
+const { save, deleteAll } = require('../db/mongodb/models/log')
 
 const getSQLTabular = (files) => {
   let string = ''
