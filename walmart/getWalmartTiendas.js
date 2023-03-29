@@ -42,10 +42,7 @@ module.exports = async function getWalmartTiendas (ruta, sheet, dataExcel) {
 
       const ARRAY = sliceArray(VALUES)
 
-      console.log('ARRAY', ARRAY.length)
-
       for (const values of ARRAY) {
-        console.log('values', values.length)
         await conectionDB.query('INSERT INTO Walmart_Tiendas (id, nombre, estado, idTipo, codigoPostal, localidad, archivo) VALUES ?', [values])
       }
     }

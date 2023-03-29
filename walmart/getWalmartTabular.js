@@ -60,10 +60,7 @@ module.exports = async function getWalmartTabular (ruta, sheet, dataExcel) {
 
         const ARRAY = sliceArray(VALUES)
 
-        console.log('ARRAY', ARRAY.length)
-
         for (const values of ARRAY) {
-          console.log('values', values.length)
           await conectionDB.query('INSERT INTO Walmart_Tabular (codigoProducto, codigoTienda, precioVentaUnidad, costoUnidad, cantidadVendida, totalPrecio, inventario, semana, anio, fechaDesde, fechaHasta, archivo, fechaRegistro) VALUES ?', [values])
         }
       }

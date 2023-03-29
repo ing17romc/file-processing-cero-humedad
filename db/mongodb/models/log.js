@@ -1,10 +1,8 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
 const dbConnect = require('../')
-const DEV = process.env.NODE_ENV !== 'prod'
+const DEV = process.env.NODE_ENV !== 'p'
 const collection = DEV ? 'AutoServicio_Log_DEV' : 'AutoServicio_Log_PROD'
-console.log('process.env.NODE_ENV', process.env.NODE_ENV)
-console.log(collection)
 
 const LogSchema = new mongoose.Schema({
   file: String,

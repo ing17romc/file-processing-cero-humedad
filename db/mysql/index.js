@@ -3,8 +3,8 @@ require('dotenv').config()
 const configLocalhost = { host: 'localhost', user: 'admin', database: 'autoservicios', port: '3306', password: 'Password123#@!' }
 
 module.exports = function getConnection () {
-  const DEV = process.env.NODE_ENV !== 'prod'
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV)
+  const DEV = process.env.NODE_ENV !== 'p'
+
   try {
     const mysql = require('mysql2')
 
